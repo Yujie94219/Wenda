@@ -25,7 +25,7 @@ public class LikeHandler implements EventHandler {
     UserService userService;
 
     @Override
-    public void doHandler(EventModel model) {
+    public void doHandle(EventModel model) {
         Message message = new Message();
         message.setFromId(WendaUtil.SYSTEM_USERID);
         message.setToId(model.getEntityOwnerId());

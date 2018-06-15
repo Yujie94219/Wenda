@@ -19,7 +19,6 @@ import java.util.Map;
 
 @Service
 public class EventCustomer implements InitializingBean, ApplicationContextAware {
-
     private static final Logger logger = LoggerFactory.getLogger(EventCustomer.class);
     private Map<EventType, List<EventHandler>> config = new HashMap<EventType, List<EventHandler>>();
     private ApplicationContext applicationContext;
@@ -30,7 +29,6 @@ public class EventCustomer implements InitializingBean, ApplicationContextAware 
     @Override
     public void afterPropertiesSet() throws Exception {
         Map<String, EventHandler> beans = applicationContext.getBeansOfType(EventHandler.class);
-        //将所有handler对应的support类的配置信息加入到config
         if (beans != null) {
             for (Map.Entry<String, EventHandler> entry : beans.entrySet()) {
                 List<EventType> eventTypes = entry.getValue().getSupportEventTypes();
@@ -57,13 +55,13 @@ public class EventCustomer implements InitializingBean, ApplicationContextAware 
                         }
 
                         EventModel eventModel = JSON.parseObject(message, EventModel.class);
-                        if (config.containsKey(eventModel.getType())) {
+                        if (!config.containsKey(eventModel.getType())) {
                             logger.error("不能识别的事件");
                             continue;
                         }
 
                         for (EventHandler handler : config.get(eventModel.getType())) {
-                            handler.doHandler(eventModel);
+                            handler.doHandle(eventModel);
                         }
                     }
                 }
